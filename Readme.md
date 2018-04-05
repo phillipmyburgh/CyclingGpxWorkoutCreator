@@ -26,4 +26,4 @@ The *GpxLib.py* library is where everything really happens. This library has som
 ## Testing Frameworks
 Unit tests for the GpxLib are run on the **Travis CI** platform:
 
-[![Build status](https://travis-ci.org/phillipmyburgh/travis-lab.svg?master)](https://travis-ci.org/phillipmyburgh/CyclingGpxWorkoutCreator)
+[![Build status](https://travis-ci.org/phillipmyburgh/CyclingGpxWorkoutCreator.svg?master)](https://travis-ci.org/phillipmyburgh/CyclingGpxWorkoutCreator)
