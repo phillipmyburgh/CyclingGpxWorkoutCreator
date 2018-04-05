@@ -1,20 +1,20 @@
-#Cycling Gpx Workout Creator
+# Cycling Gpx Workout Creator
 
 
-##Introduction
+## Introduction
 Coming soon...
  
-##Installation
+## Installation
 All the scripts require *Python 2.7.*
 Additional Python packages are contained in the *requirements.txt* file. If you have *pip*, then you can install the packages using the commandline:
 	
 	pip install -r requirements.txt
 
 
-##Usage
+## Usage
 Coming soon..
 
-#GpxLib
+# GpxLib
 The *GpxLib.py* library is where everything really happens. This library has some nice functions such as:
 
 * Haversine: Calculating the great-circle distance between points
@@ -23,6 +23,7 @@ The *GpxLib.py* library is where everything really happens. This library has som
 * And everything that has been needed to create the other scripts
 
 
-##Testing Frameworks
+## Testing Frameworks
 Unit tests for the GpxLib are run on the **Travis CI** platform:
+
 [![Build status](https://travis-ci.org/phillipmyburgh/travis-lab.svg?master)](https://travis-ci.org/phillipmyburgh/CyclingGpxWorkoutCreator)
