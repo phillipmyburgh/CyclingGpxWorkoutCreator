@@ -6,11 +6,15 @@ from math import radians, cos, sin, asin, sqrt
 from time import sleep
 import urllib
 import json
-import xml.etree.ElementTree
 from StringIO import StringIO
 import copy
+
+import xml.etree.ElementTree
 from lxml.etree import tostring
 from lxml.builder import E
+
+import matplotlib.pyplot as plt
+plt.ion()
 
 
 def DegreesToRadians(x):
@@ -144,7 +148,6 @@ def GetCorrectElevationFromGoogle(gpxPoints, apiKey):
 
         # Encode the points otherwise we cannot use the maximum number of points because there is a character limit
         # for all requests. We also have to check the length of the string
-        polylineEncodedPoints = ""
         while (True):
             requestString = "https://maps.googleapis.com/maps/api/elevation/json?locations=enc:"
             polylineEncodedPoints = ConvertGpxPointsToPolyLineEncoding(gpxPoints[pointsProcessed : pointsProcessed + pointsToProcess])
@@ -342,15 +345,19 @@ class GpxCourse:
         return GpxCourse(newPoints)
 
 
-    def PruneDistance(self, distance):
+    def PruneDistance(self, distance, start=0):
         '''
             Return a new GpxCourse which is a copy of the current instance expect that the distance is limited
             to the distance passed as parameter
         '''
         newGpxPoints = []
         index = 0
-        while self.GetDistanceAtIndex(index) < distance:
-            newGpxPoints.append(self[index])
+        while index < self.GetNumberOfPoints():
+            currentDistance = self.GetDistanceAtIndex(index)
+            if currentDistance > distance:
+                break
+            if currentDistance >= start:
+                newGpxPoints.append(self[index])
             index += 1
 
         return GpxCourse(newGpxPoints)
@@ -603,6 +610,7 @@ def ParseGpxFile(inputFilename):
 
 
 def GenerateTcxSlopeWorkout(slopeCourse, outputName):
+    '''Create a tcx file of name outputName.tcx (do not add the extension to the name)'''
     TrainingDbTag = E("TrainingCenterDatabase")
     TrainingDbTag.attrib["xmlns"] = "http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2"
     output = TrainingDbTag
@@ -635,5 +643,53 @@ def GenerateTcxSlopeWorkout(slopeCourse, outputName):
         f.write(outputXml)
 
 
+def NextFigure(title = ""):
+    plt.figure(NextFigure.currentFigure)
+    NextFigure.currentFigure += 1
+    plt.title(title)
+NextFigure.currentFigure = 0
+
+
+def PlotSlope(slopeCourse, maxDistance, title = "", style=""):
+    NextFigure(title)
+    plotDataSlope = []
+    plotDataDistance = []
+    for slopePoint in slopeCourse.GetSlopePoints():
+        if slopePoint.distance > maxDistance and maxDistance > 0:
+            break
+        plotDataSlope.append(slopePoint.slope)
+        plotDataDistance.append(slopePoint.distance)
+    plt.plot(plotDataDistance, plotDataSlope, style)
+    plt.show()
+
+
+def PlotProfile(profile, maxDistance, title = "", style=""):
+    NextFigure(title)
+    plotDataElevation = []
+    plotDataDistance = []
+    for index in range(0, profile.GetNumberOfPoints() - 1):
+        if profile[index].distance > maxDistance and maxDistance > 0:
+            break
+        plotDataElevation.append(profile[index].elevation)
+        plotDataDistance.append(profile[index].distance)
+    plt.plot(plotDataDistance, plotDataElevation, style)
+    plt.show()
+
+
+def PlotGpx(gpxCourse, maxDistance, title = "", style=""):
+    NextFigure(title)
+    plotDataEle = []
+    plotDataDistance = []
+    totalDistance = 0
+    plotDataEle.append(gpxCourse[0].elevation)
+    plotDataDistance.append(0)
+    for index in range(1, gpxCourse.GetNumberOfPoints() - 1):
+        totalDistance += GetDistanceBetweenPoints(gpxCourse[index], gpxCourse[index-1])
+        if totalDistance > maxDistance and maxDistance > 0:
+            break
+        plotDataEle.append(gpxCourse[index].elevation)
+        plotDataDistance.append(totalDistance)
+    plt.plot(plotDataDistance, plotDataEle, style)
+    plt.show()
 
 

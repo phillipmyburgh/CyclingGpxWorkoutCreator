@@ -117,7 +117,6 @@ class TestGpxLib(unittest.TestCase):
         self.assertAlmostEqual(self.courseInfo1.gpxCourse.GetElevationAtDistance(5000), 1518.2241, 3)
 
 
-
     def test_CourseRemoveAllDuplicateGpxPoints(self):
         # Simple test. We would want the total distance to be the same, and the distance between any points should
         # not be zero
@@ -135,6 +134,7 @@ class TestGpxLib(unittest.TestCase):
         newGpxCourse = self.courseInfo1.gpxCourse.PruneDistance(5000)
         self.assertLessEqual(newGpxCourse.GetTotalDistance(), 5000)
         self.assertGreater(newGpxCourse.GetTotalDistance(), 0)
+        # Todo: Test start param as well
 
 
     def test_CourseCreateProfile(self):
