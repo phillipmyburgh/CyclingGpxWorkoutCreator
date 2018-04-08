@@ -449,6 +449,30 @@ class ProfileCourse:
         return self[-1].distance
 
 
+    def GetHighestElevation(self):
+        '''
+            Get the highest elevation of the profile. 
+        '''
+        highestElevation = self[0].elevation
+        for index in range(0, self.GetNumberOfPoints()):
+            if self[index].elevation > highestElevation:
+                highestElevation = self[index].elevation
+
+        return highestElevation
+
+
+    def GetLowestElevation(self):
+        '''
+            Get the lowest elevation of the profile. 
+        '''
+        lowestElevation = self[0].elevation
+        for index in range(0, self.GetNumberOfPoints()):
+            if self[index].elevation < lowestElevation:
+                lowestElevation = self[index].elevation
+
+        return lowestElevation
+
+
     def GetElevationAtDistance(self, distance):
         '''Finds the elevation at a given distance. Will also use linear interpolation between points'''
         # First we use binary search to find the distance
@@ -576,6 +600,8 @@ class SlopeCourse:
         return SlopeCourse(outputSlopes)
 
 
+
+
 def _GetAllGpxPointsFromRootXml(root):
     gpxPoints = []
     for child in root.findall('.//trkpt'):
@@ -672,6 +698,22 @@ def PlotProfile(profile, maxDistance, title = "", style=""):
             break
         plotDataElevation.append(profile[index].elevation)
         plotDataDistance.append(profile[index].distance)
+    plt.ylabel("Elevation (meters)")
+    plt.xlabel("Distance (meters)")
+    startDistance = profile[0].distance
+    totalDistance = profile.GetTotalDistance()
+    highestElevation = profile.GetHighestElevation()
+    lowestElevation = profile.GetLowestElevation()
+    elevationGain = profile.GetElevationGain()
+    textX = startDistance
+    textY = highestElevation
+    profileTextInfo = "Elevation Gain = " + str(int(elevationGain)) + "m\n"
+    profileTextInfo += "Total Distance = " + str(int(totalDistance)) + "m\n"
+    profileTextInfo += "Lowest Elevation = " + str(int(lowestElevation)) + "m\n"
+    profileTextInfo += "Highest Elevation = " + str(int(highestElevation)) + "m"
+
+    plt.text(textX, textY, profileTextInfo, multialignment="left",va="top", ha="left")
+
     plt.plot(plotDataDistance, plotDataElevation, style)
     plt.show()
 
