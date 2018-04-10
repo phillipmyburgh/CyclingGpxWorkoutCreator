@@ -101,6 +101,33 @@ optional arguments:
                         Trims everything after the stop distance
 ```
 
+### Compare Profiles
+```
+python CompareProfiles.py [-h] [--apiKey APIKEY]
+                          [--interpolationResolution INTERPOLATIONRESOLUTION]
+                          [--startDistance STARTDISTANCE]
+                          [--stopDistance STOPDISTANCE]
+                          [inputFilenames [inputFilenames ...]]
+
+Compare the profiles of multiple .gpx files
+
+positional arguments:
+  inputFilenames        Input Filenames
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --apiKey APIKEY, -a APIKEY
+                        Google Maps API Key
+  --interpolationResolution INTERPOLATIONRESOLUTION, -r INTERPOLATIONRESOLUTION
+                        Resolution of the interpolation in meter (defaults to
+                        100m)
+  --startDistance STARTDISTANCE, -start STARTDISTANCE
+                        Trims everything before the start distance (default
+                        0m)
+  --stopDistance STOPDISTANCE, -stop STOPDISTANCE
+                        Trims everything after the stop distance
+                        
+```
 
 
 ## Testing Frameworks
