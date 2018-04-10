@@ -45,6 +45,11 @@ Most training applications can export previous cycling workouts to a GPX file. H
 ### Google API Key
 Some scripts give you the option to include a Google Maps API key. You can get a free key from [here](https://developers.google.com/maps/documentation/javascript/get-api-key) which will then allow the script to download accurate elevation information from the Google Maps server.
 
+###Drag-and-Drop option
+In the bin/Windows folder you will find .bat files for each of the python scripts. These allow you to drag-and-drop the gpx file(s) onto the .bat file, which would then in turn invoke the python script.
+
+You can add your Google API key into the ApiKey.txt file, which can then be used by these Windows wrappers.
+
 ### Converting GPX to slope-distance TCX workout
 ```
 python ConvertGpxToTcx.py [-h] [--apiKey APIKEY]
