@@ -72,6 +72,9 @@ if apiKey:
 
 profile = gpxCourse.CreateEquidistantProfile(interpolationResolution)
 
+if profile.GetElevationGain() == 0 and apiKey is None:
+    print "Elevation data seems to be missing. You would need an API key to retrieve this info from the internet."
+
 if plot:
     PlotProfile(profile, 0, "Course Profile")
 

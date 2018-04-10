@@ -629,11 +629,8 @@ def _GetAllGpxPointsFromRootXml(root):
 
         elevationTag = child.find("ele")
 
-        if elevationTag is None:
-            print "The file does not contain elevation data."
-            exit(2)
+        elevation = float(elevationTag.text) if elevationTag is not None else 0.0
 
-        elevation = float(elevationTag.text)
         gpxPoints.append(GpxPoint(latitude, longitude, elevation))
 
     return gpxPoints
