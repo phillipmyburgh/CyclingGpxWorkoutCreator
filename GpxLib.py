@@ -220,13 +220,16 @@ def InterpolateBetweenPoints(gpxPoints, interpolationResolution):
         else:  # 2 points are fine, just return them
             return copy.deepcopy(gpxPoints)
 
-    elif GetDistanceBetweenPoints(gpxPoints[0], gpxPoints[-1]) <= interpolationResolution:
-        # if the distance between the first and the last point are still within spec, we can remove all points inbetween
-        outputCopy = [gpxPoints[0], gpxPoints[-1]]
-        return copy.deepcopy(outputCopy)
+    else:
+        distanceBetweenStartAndFinish = 0.0
+        for index in range(0, len(gpxPoints)-2):
+            distanceBetweenStartAndFinish += GetDistanceBetweenPoints(gpxPoints[index], gpxPoints[index+1])
+        if distanceBetweenStartAndFinish <= interpolationResolution:
+            # if the distance between the first and the last point are still within spec, we can remove all points inbetween
+            outputCopy = [gpxPoints[0], gpxPoints[-1]]
+            return copy.deepcopy(outputCopy)
 
     outputCopy = []
-    #for index in range(0, len(gpxPoints) - 1):
     upperIndex = len(gpxPoints) - 1
     outputCopy.extend(InterpolateBetweenPoints(gpxPoints[0:upperIndex/2], interpolationResolution))
     outputCopy.extend(InterpolateBetweenPoints(gpxPoints[upperIndex/2:upperIndex], interpolationResolution))
