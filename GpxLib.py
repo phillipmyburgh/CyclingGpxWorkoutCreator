@@ -752,6 +752,28 @@ def PlotProfile(profile, maxDistance, title = "", style=""):
     plt.show()
 
 
+def PlotProfiles(profiles, maxDistance, title = "", style=""):
+    NextFigure(title)
+    for profile in profiles:
+        plotDataElevation = []
+        plotDataDistance = []
+        for index in range(0, profile.GetNumberOfPoints() - 1):
+            if profile[index].distance > maxDistance and maxDistance > 0:
+                break
+            plotDataElevation.append(profile[index].elevation)
+            plotDataDistance.append(profile[index].distance)
+        totalElevationGain = profile.GetElevationGain()
+        profileLabel = profile.name + " (" + str(int(totalElevationGain)) + "m)"
+        plt.plot(plotDataDistance, plotDataElevation, style, label=profileLabel)
+
+
+    plt.ylabel("Elevation (meters)")
+    plt.xlabel("Distance (meters)")
+    plt.legend(loc='upper left')
+
+    plt.show()
+
+
 def PlotGpx(gpxCourse, maxDistance, title = "", style=""):
     NextFigure(title)
     plotDataEle = []
