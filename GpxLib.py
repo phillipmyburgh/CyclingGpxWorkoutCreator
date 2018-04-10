@@ -8,6 +8,7 @@ import urllib
 import json
 from StringIO import StringIO
 import copy
+import os
 
 import xml.etree.ElementTree
 from lxml.etree import tostring
@@ -272,8 +273,17 @@ class GpxCourse:
         Represents a course, which is an array of GpxPoints.
         Class is immutable and will give a copy whenever you try and change something
     '''
-    def __init__(self, gpxPoints):
+    def __init__(self, gpxPoints, name=""):
         self.__gpxPoints = gpxPoints
+        self.name = name
+
+
+    def SetName(self, name):
+        self.name = name
+
+
+    def GetName(self):
+        return self.name
 
 
     def GetNumberOfPoints(self):
@@ -337,12 +347,12 @@ class GpxCourse:
             if distance > 0:
                 outputPoints.append(copy.copy(self[index]))
 
-        return GpxCourse(outputPoints)
+        return GpxCourse(outputPoints, self.name)
 
 
     def CorrectElevation(self, apiKey):
         newPoints = GetCorrectElevationFromGoogle(self.GetGpxPoints(), apiKey)
-        return GpxCourse(newPoints)
+        return GpxCourse(newPoints, self.name)
 
 
     def PruneDistance(self, distance, start=0):
@@ -360,7 +370,7 @@ class GpxCourse:
                 newGpxPoints.append(self[index])
             index += 1
 
-        return GpxCourse(newGpxPoints)
+        return GpxCourse(newGpxPoints, self.name)
 
 
     def InterpolateToGivenResolution(self, interpolationResolution):
@@ -371,7 +381,7 @@ class GpxCourse:
         '''
         newGpxPoints = self.GetGpxPoints()
         newGpxPoints = InterpolateBetweenPoints(newGpxPoints, interpolationResolution)
-        return GpxCourse(newGpxPoints)
+        return GpxCourse(newGpxPoints, self.name)
 
 
     def CreateProfile(self):
@@ -386,7 +396,7 @@ class GpxCourse:
             distance += GetDistanceBetweenPoints(self[index], self[index + 1])
             outputPoints.append(ProfilePoint(distance, self[index + 1].elevation))
 
-        return ProfileCourse(outputPoints)
+        return ProfileCourse(outputPoints, self.name)
 
 
     def CreateEquidistantProfile(self, gapInMeters):
@@ -409,13 +419,22 @@ class GpxCourse:
         if truncatedTotalDistance < totalDistance:
             outputPoints.append(ProfilePoint(totalDistance, profilePoints.GetElevationAtDistance(totalDistance)))
 
-        return ProfileCourse(outputPoints)
+        return ProfileCourse(outputPoints, self.name)
 
 
 class ProfileCourse:
 
-    def __init__(self, profilePoints):
+    def __init__(self, profilePoints, name=""):
         self.__profilePoints = profilePoints
+        self.name = name
+
+
+    def SetName(self, name):
+        self.name = name
+
+
+    def GetName(self):
+        return self.name
 
 
     # Overload the [] by returning a copy of the gpx point
@@ -632,7 +651,22 @@ def ParseGpxFile(inputFilename):
             el.tag = el.tag.split('}', 1)[1]  # strip all namespaces
     root = it.root
     gpxPoints = _GetAllGpxPointsFromRootXml(root)
-    return GpxCourse(gpxPoints)
+
+    gpxCourse = GpxCourse(gpxPoints)
+
+    # Look for a name in either the trk or the metadata tags
+    nameTag = root.find(".//trk/name")
+    if nameTag is not None:
+        gpxCourse.SetName(str(nameTag.text).strip())
+    nameTag = root.find(".//metadata/name")
+    if nameTag is not None:
+        gpxCourse.SetName(str(nameTag.text).strip())
+    # And if we don't have a name, use the filename as the name...
+    if gpxCourse.GetName() == "":
+        bareFilename = os.path.basename(os.path.splitext(inputFilename)[0])
+        gpxCourse.SetName(bareFilename)
+
+    return gpxCourse
 
 
 def GenerateTcxSlopeWorkout(slopeCourse, outputName):
